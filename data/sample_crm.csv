@@ -1,0 +1,31 @@
+account_id,account_name,domain,industry,country,employee_count,annual_revenue_usd,lifecycle_stage,owner,source,last_activity_date,account_tier,fit_score,intent_signal
+A001,Northstar Robotics,northstarrobotics.com,Industrial Automation,Canada,420,68000000,Sales Qualified,Maya Chen,Event,2026-10-29,A,88,High
+A002,MapleWave Health,maplewavehealth.ca,Health Technology,Canada,180,24000000,Opportunity,Daniel Ortiz,Inbound,2026-10-22,A,91,High
+A003,HelioGrid Energy,heliogrid.io,Energy Software,United States,760,145000000,Prospect,Amira Patel,Partner,2026-09-15,,84,Medium
+A004,Harbour Analytics,harbouranalytics.com,Business Intelligence,Canada,95,,Marketing Qualified,Liam Wong,Webinar,2026-10-18,B,78,Medium
+A005,Polaris Freight,polarisfreight.com,Logistics,United States,1100,310000000,Sales Qualified,Sofia Martin,Outbound,2026-08-04,A,,High
+A006,Keystone Foods,keystonefoods.example,Food Manufacturing,Canada,640,205000000,Prospect,,Outbound,2026-02-15,,67,
+A007,BluePeak Systems,bluepeaksystems.com,Cloud Services,UK,280,46000000,MQL,Noah Singh,Inbound,2026-10-05,B,82,High
+A008,Evergreen Mobility,evergreenmobility.com,Transportation,Canada,510,,Marketing Qualified,Ava Tremblay,Event,2026-07-11,B,,Medium
+A009,Nexa Manufacturing,nexamfg.com,Manufacturing,United States,350,57000000,Sales Qualified,Ethan Park,Outbound,2026-10-30,A,89,
+A010,Nexa Manufacturing,nexamfg.com,Manufacturing,United States,350,57000000,Opportunity,Ethan Park,Outbound,2026-10-31,A,89,High
+A011,Silverline Education,silverlineedu.org,Education Technology,Canada,,,Prospect,Chloe Nguyen,Referral,2026-04-02,C,61,Low
+A012,Arcadia Labs,,Life Sciences,Canada,70,9500000,Marketing Qualified,Lucas Meyer,Inbound,2026-10-01,C,72,Medium
+A013,MetroForge,metroforge.ca,Advanced Manufacturing,Canada,900,188000000,Customer,Olivia Rossi,,2026-10-12,A,93,High
+A014,JuniperWorks,juniperworks.co,Professional Services,U.K.,210,33000000,Opportunity,Henry Cole,Outbound,2026-09-28,,80,Medium
+A015,Redwood Commerce,redwood-commerce.com,E-commerce,United States,,410000000,Sales Qualified,Nora Kim,Inbound,2026-10-20,A,90,High
+A016,CloudHarbor,cloudharbor.ai,AI Infrastructure,United States,320,52000000,Prospect,Owen Baker,,2026-10-24,A,87,High
+A017,Boreal Finance,borealfinance.ca,Financial Services,Canada,580,99000000,Inactive,Grace Li,Outbound,2025-11-14,B,,Low
+A018,AtlasBio,atlasbio.de,Biotechnology,Germany,240,39000000,Mkt Qualified,Leo Schmidt,Partner,2026-10-09,B,83,Medium
+A019,Orchid Networks,orchidnetworks.fr,Telecommunications,FR,470,71000000,Sales Qualified,Emma Dubois,Event,2026-08-25,B,76,Medium
+A020,VectorWorks,vectorworks.pl,Industrial Software,Poland,190,27000000,Prospect,Jan Kowalski,Outbound,2026-10-14,B,79,
+A021,Dnipro Data,dniprodata.ua,Data Services,Ukraine,85,11000000,Marketing Qualified,,Referral,2026-10-26,C,75,High
+A022,Pacific Quantum,pacificquantum.com,Deep Tech,United States,55,,Prospect,Mason Lee,Conference,2026-10-27,C,81,High
+A023,Northern Retail,northernretail.ca,Retail,CA,2500,760000000,Opportunity,Isabella Roy,Inbound,2026-09-03,A,85,Medium
+A024,Greenline Construction,greenlineconstruction.com,Construction,Canada,720,132000000,SQL,Jacob Brown,Outbound,2026-04-10,B,73,Low
+A025,Meridian Legal,meridianlegal.ca,Legal Services,Canada,160,29000000,Prospect,Sarah Ahmed,,,C,64,Low
+A026,Vertex Security,vertexsecurity.com,Cybersecurity,United States,300,48000000,Sales Qualified,David Chen,Event,2026-10-16,B,,High
+A027,UrbanCore,urbancore.ca,,Canada,1250,345000000,Customer,Mia Wilson,Partner,2026-10-21,A,92,Medium
+A028,TerraNova Foods,terranovafoods.com,Food Manufacturing,Canada,,178000000,Opportunity,Alex Martin,Inbound,2026-09-11,A,84,Medium
+A029,SignalBridge,signalbridge.io,Sales Technology,United States,140,22000000,Marketing Qualified,Emily Zhao,Webinar,2026-10-19,B,88,
+A030,Cobalt Health,cobalthealth.ca,Health Technology,Canada,205,,Prospect,Nathan Green,Outbound,2026-10-06,B,77,Medium
