@@ -1,7 +1,7 @@
 from datetime import date
 from pathlib import Path
 
-import altair as alt
+import plotly.graph_objects as go
 import pandas as pd
 import streamlit as st
 
@@ -63,12 +63,17 @@ elif result.overall_score >= 60:
 else:
     readiness_band = "Not ready"
 
-col1, col2, col3, col4, col5 = st.columns(5)
-col1.metric("Overall readiness", f"{result.overall_score:.1f}/100", border=True)
-col2.metric("Readiness band", readiness_band, border=True)
-col3.metric("Records", result.summary["records"], border=True)
-col4.metric("Duplicate records", result.summary["duplicate_records"], border=True)
-col5.metric("Stale records", result.summary["stale_records"], border=True)
+col1, col2, col3, col4 = st.columns(4)
+col1.metric(
+    "Overall readiness",
+    f"{result.overall_score:.1f}/100",
+    delta=readiness_band,
+    delta_color="off",
+    border=True,
+)
+col2.metric("Records", result.summary["records"], border=True)
+col3.metric("Duplicate records", result.summary["duplicate_records"], border=True)
+col4.metric("Stale records", result.summary["stale_records"], border=True)
 
 st.progress(min(max(result.overall_score / 100, 0.0), 1.0))
 if reference_date is not None:
@@ -83,32 +88,50 @@ score_df = pd.DataFrame(
         "Score": list(result.dimension_scores.values()),
     }
 )
-score_chart = (
-    alt.Chart(score_df)
-    .mark_bar()
-    .encode(
-        x=alt.X(
-            "Score:Q",
-            title="Score (0–100)",
-            scale=alt.Scale(domain=[0, 100], clamp=True),
-        ),
-        y=alt.Y(
-            "Dimension:N",
-            title=None,
-            sort=list(result.dimension_scores.keys()),
-        ),
-        tooltip=[
-            alt.Tooltip("Dimension:N", title="Dimension"),
-            alt.Tooltip("Score:Q", title="Score", format=".1f"),
-        ],
+score_chart = go.Figure(
+    go.Bar(
+        x=score_df["Score"],
+        y=score_df["Dimension"],
+        orientation="h",
+        hovertemplate="%{y}: %{x:.1f}<extra></extra>",
     )
-    .properties(height=300)
 )
 
-st.altair_chart(score_chart, width="stretch")
+score_chart.update_layout(
+    height=330,
+    margin=dict(l=10, r=20, t=10, b=10),
+    showlegend=False,
+    dragmode="zoom",
+)
+
+score_chart.update_xaxes(
+    title="Score (0–100)",
+    range=[0, 100],
+    minallowed=0,
+    maxallowed=100,
+    fixedrange=False,
+    dtick=20,
+)
+
+score_chart.update_yaxes(
+    title=None,
+    autorange="reversed",
+    fixedrange=True,
+)
+
+st.plotly_chart(
+    score_chart,
+    width="stretch",
+    config={
+        "scrollZoom": True,
+        "displaylogo": False,
+    },
+    alt="Horizontal bar chart showing the five GTM readiness dimension scores on a 0 to 100 scale.",
+)
+
 st.caption(
-    "Scores are bounded from 0 to 100. Zooming is disabled because values outside "
-    "that range are not meaningful for this readiness model."
+    "Mouse-wheel zoom is enabled, but the score axis is constrained to the valid 0–100 range. "
+    "Use Plotly's reset control to return to the full view."
 )
 
 st.subheader("What should RevOps fix first — and why?")
