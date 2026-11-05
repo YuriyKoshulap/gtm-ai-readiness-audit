@@ -106,11 +106,11 @@ score_chart.update_layout(
 
 score_chart.update_xaxes(
     title="Readiness score",
-    range=[0, 110],
+    range=[0, 150],
     minallowed=0,
-    maxallowed=120,
+    maxallowed=220,
     fixedrange=False,
-    dtick=20,
+    dtick=25,
 )
 
 score_chart.update_yaxes(
@@ -130,8 +130,8 @@ st.plotly_chart(
 )
 
 st.caption(
-    "Scores themselves are capped at 100. The chart includes a small amount of extra axis headroom "
-    "so you can zoom out slightly without drifting into negative or extreme ranges."
+    "Scores themselves are capped at 100. The chart allows additional visual headroom for zooming out, "
+    "while still preventing negative values and extreme runaway ranges."
 )
 
 st.subheader("What should RevOps fix first — and why?")
