@@ -1,3 +1,4 @@
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
@@ -26,9 +27,13 @@ with st.sidebar:
 if uploaded is not None:
     data = pd.read_csv(uploaded)
     source_label = uploaded.name
+    reference_date = None
 else:
     data = pd.read_csv(sample_path)
     source_label = "Bundled synthetic sample"
+    # Keep the bundled demo reproducible instead of letting its recency score
+    # drift as the real-world calendar advances.
+    reference_date = date(2026, 11, 4)
 
 expected_fields = {
     "account_name",
@@ -44,24 +49,50 @@ missing = sorted(expected_fields - set(c.strip().lower() for c in data.columns))
 if missing:
     st.warning("Missing expected fields will reduce the completeness score: " + ", ".join(missing))
 
-result = audit_crm(data)
+result = audit_crm(data, today=reference_date)
 
 st.subheader("Readiness snapshot")
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("Overall readiness", f"{result.overall_score:.1f}/100")
-col2.metric("Records", result.summary["records"])
-col3.metric("Duplicate records", result.summary["duplicate_records"])
-col4.metric("Stale records", result.summary["stale_records"])
+
+if result.overall_score >= 90:
+    readiness_band = "Strong foundation"
+elif result.overall_score >= 75:
+    readiness_band = "Needs cleanup"
+elif result.overall_score >= 60:
+    readiness_band = "At risk"
+else:
+    readiness_band = "Not ready"
+
+col1, col2, col3, col4, col5 = st.columns(5)
+col1.metric("Overall readiness", f"{result.overall_score:.1f}/100", border=True)
+col2.metric("Readiness band", readiness_band, border=True)
+col3.metric("Records", result.summary["records"], border=True)
+col4.metric("Duplicate records", result.summary["duplicate_records"], border=True)
+col5.metric("Stale records", result.summary["stale_records"], border=True)
 
 st.progress(min(max(result.overall_score / 100, 0.0), 1.0))
-st.caption(f"Source: {source_label}")
+if reference_date is not None:
+    st.caption(f"Source: {source_label} · Demo reference date: {reference_date.isoformat()}")
+else:
+    st.caption(f"Source: {source_label}")
 
 st.subheader("Dimension scores")
 score_df = pd.DataFrame(
-    {"Score": result.dimension_scores.values()},
-    index=result.dimension_scores.keys(),
+    {
+        "Dimension": list(result.dimension_scores.keys()),
+        "Score": list(result.dimension_scores.values()),
+    }
 )
-st.bar_chart(score_df)
+st.bar_chart(
+    score_df,
+    x="Dimension",
+    y="Score",
+    horizontal=True,
+    sort=False,
+    height=320,
+    x_label="Dimension",
+    y_label="Score (0–100)",
+)
+st.caption("Higher scores indicate cleaner, more usable source data for downstream GTM workflows.")
 
 left, right = st.columns([1, 1])
 with left:
