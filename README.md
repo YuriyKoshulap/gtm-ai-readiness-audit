@@ -22,9 +22,15 @@ My background includes B2B business research, CRM/data management, reporting and
 
 This project focuses on the data-quality layer that precedes workflows such as enrichment, account scoring, routing, personalization and AI-assisted account research.
 
-## Screenshot / demo
+## Live demo
 
-The MVP is implemented as a Streamlit app. A screenshot will be added after the first local run and UI review.
+**[Open the GTM AI Readiness Auditor](https://gtm-ai-readiness-audit.streamlit.app/)**
+
+The live Streamlit app opens with a bundled synthetic CRM sample and also accepts user-uploaded CSV files. It returns a readiness score, dimension-level diagnostics, a RevOps fix-first queue, executive recommendations, a detailed issue register and a downloadable audited CSV.
+
+## Project status
+
+**v1 complete.** The core audit, business-priority layer, interactive dashboard, synthetic sample data and live deployment are operational. Future additions are optional extensions rather than requirements for the portfolio version.
 
 ## Run locally
 
@@ -102,8 +108,9 @@ The score is a **documented demo heuristic, not an industry benchmark**. See [do
 - account and pipeline data auditing
 - Python and pandas
 - transparent scoring logic
-- data validation and issue prioritization
-- Streamlit dashboard development
+- data validation and RevOps issue prioritization
+- business-impact translation: what to fix first, why it matters and what action to take
+- Streamlit dashboard development and deployment
 - translating business-process requirements into reproducible rules
 
 ## Possible next extensions
