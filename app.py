@@ -1,6 +1,7 @@
 from datetime import date
 from pathlib import Path
 
+import altair as alt
 import pandas as pd
 import streamlit as st
 
@@ -82,17 +83,33 @@ score_df = pd.DataFrame(
         "Score": list(result.dimension_scores.values()),
     }
 )
-st.bar_chart(
-    score_df,
-    x="Dimension",
-    y="Score",
-    horizontal=True,
-    sort=False,
-    height=320,
-    x_label="Dimension",
-    y_label="Score (0–100)",
+score_chart = (
+    alt.Chart(score_df)
+    .mark_bar()
+    .encode(
+        x=alt.X(
+            "Score:Q",
+            title="Score (0–100)",
+            scale=alt.Scale(domain=[0, 100], clamp=True),
+        ),
+        y=alt.Y(
+            "Dimension:N",
+            title=None,
+            sort=list(result.dimension_scores.keys()),
+        ),
+        tooltip=[
+            alt.Tooltip("Dimension:N", title="Dimension"),
+            alt.Tooltip("Score:Q", title="Score", format=".1f"),
+        ],
+    )
+    .properties(height=300)
 )
-st.caption("Higher scores indicate cleaner, more usable source data for downstream GTM workflows.")
+
+st.altair_chart(score_chart, width="stretch")
+st.caption(
+    "Scores are bounded from 0 to 100. Zooming is disabled because values outside "
+    "that range are not meaningful for this readiness model."
+)
 
 st.subheader("What should RevOps fix first — and why?")
 st.caption(
