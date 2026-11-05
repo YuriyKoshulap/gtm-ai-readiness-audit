@@ -94,9 +94,32 @@ st.bar_chart(
 )
 st.caption("Higher scores indicate cleaner, more usable source data for downstream GTM workflows.")
 
+st.subheader("What should RevOps fix first — and why?")
+st.caption(
+    "Priorities are based on downstream operational impact, not only on record count. "
+    "P1 issues can directly break entity matching, ownership, routing or account-level reporting."
+)
+
+if result.fix_first.empty:
+    st.success("No operational priorities were triggered by the current rules.")
+else:
+    st.dataframe(
+        result.fix_first,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Priority": st.column_config.TextColumn(width="small"),
+            "Fix first": st.column_config.TextColumn(width="medium"),
+            "Affected records": st.column_config.NumberColumn(width="small"),
+            "Business risk": st.column_config.TextColumn(width="medium"),
+            "Why it matters": st.column_config.TextColumn(width="large"),
+            "Recommended action": st.column_config.TextColumn(width="large"),
+        },
+    )
+
 left, right = st.columns([1, 1])
 with left:
-    st.subheader("Priority recommendations")
+    st.subheader("Executive recommendations")
     for recommendation in result.recommendations:
         st.write(f"• {recommendation}")
 
@@ -107,7 +130,7 @@ with right:
     st.write(f"**Stale or missing activity:** {result.summary['stale_records']}")
     st.write(f"**Duplicate records:** {result.summary['duplicate_records']}")
 
-st.subheader("Issue register")
+st.subheader("Detailed issue register")
 if result.issues.empty:
     st.success("No issues were detected by the current rules.")
 else:
