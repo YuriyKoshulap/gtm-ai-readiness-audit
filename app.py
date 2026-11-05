@@ -105,10 +105,10 @@ score_chart.update_layout(
 )
 
 score_chart.update_xaxes(
-    title="Score (0–100)",
-    range=[0, 100],
+    title="Readiness score",
+    range=[0, 110],
     minallowed=0,
-    maxallowed=100,
+    maxallowed=120,
     fixedrange=False,
     dtick=20,
 )
@@ -130,8 +130,8 @@ st.plotly_chart(
 )
 
 st.caption(
-    "Mouse-wheel zoom is enabled, but the score axis is constrained to the valid 0–100 range. "
-    "Use Plotly's reset control to return to the full view."
+    "Scores themselves are capped at 100. The chart includes a small amount of extra axis headroom "
+    "so you can zoom out slightly without drifting into negative or extreme ranges."
 )
 
 st.subheader("What should RevOps fix first — and why?")
