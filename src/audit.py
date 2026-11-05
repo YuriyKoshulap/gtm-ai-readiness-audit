@@ -58,6 +58,7 @@ class AuditResult:
     dimension_scores: Dict[str, float]
     summary: Dict[str, int]
     issues: pd.DataFrame
+    fix_first: pd.DataFrame
     audited_data: pd.DataFrame
     recommendations: List[str]
 
@@ -220,11 +221,107 @@ def audit_crm(df: pd.DataFrame, today: date | None = None) -> AuditResult:
     if not recommendations:
         recommendations.append("Core data quality is strong; next evaluate governance, enrichment sources and how scoring decisions are monitored over time.")
 
+    # RevOps-oriented fix-first queue. These are operational priorities rather than
+    # additional scoring dimensions: the aim is to explain what could break downstream.
+    queue = []
+
+    def add_fix(priority, issue, affected, business_risk, why, action):
+        if affected:
+            queue.append({
+                "Priority": priority,
+                "Fix first": issue,
+                "Affected records": int(affected),
+                "Business risk": business_risk,
+                "Why it matters": why,
+                "Recommended action": action,
+            })
+
+    missing_domain = int((~valid_domain).sum())
+    missing_owner = int((~_text_present(_safe_col(df, "owner"))).sum())
+    missing_source = int((~_text_present(_safe_col(df, "source"))).sum())
+    seg_incomplete = int((segmentation_checks.mean(axis=1) < 1.0).sum())
+
+    add_fix(
+        "P1",
+        "Duplicate accounts/domains",
+        int((dup_domain | dup_name).sum()),
+        "Routing, attribution and reporting",
+        "The same company can be scored, assigned or reported more than once, fragmenting activity and pipeline visibility.",
+        "Merge or deduplicate records; use normalized domain as the primary entity key and preserve the surviving account history.",
+    )
+    add_fix(
+        "P1",
+        "Missing or invalid domains",
+        missing_domain,
+        "Enrichment and account matching",
+        "Domain is often the most reliable key for enrichment, entity resolution and account-level signal matching.",
+        "Recover and normalize domains before enrichment, scoring or account-signal ingestion.",
+    )
+    add_fix(
+        "P1",
+        "Missing account owner",
+        missing_owner,
+        "Lead/account routing and accountability",
+        "Unowned records can fall outside SLAs, sequencing and territory accountability.",
+        "Assign owners and review routing rules so every in-scope account has a clear owner.",
+    )
+    add_fix(
+        "P2",
+        "Nonstandard lifecycle stages",
+        int((~valid_stage).sum()),
+        "Funnel reporting and automation",
+        "Inconsistent stages can break funnel metrics, trigger logic and handoffs between marketing and sales.",
+        "Map values to one controlled lifecycle vocabulary and enforce it at entry/import.",
+    )
+    add_fix(
+        "P2",
+        "Stale or missing activity",
+        int(stale.sum()),
+        "Prioritization and pipeline hygiene",
+        "Old activity can make dormant accounts look current and distort account-priority or next-best-action logic.",
+        "Define a stale-account policy; refresh, recycle or archive records beyond the agreed inactivity threshold.",
+    )
+    add_fix(
+        "P2",
+        "Nonstandard country values",
+        int((~valid_country).sum()),
+        "Territory routing and segmentation",
+        "Values such as UK, U.K. and CA can split one territory into several categories and create inconsistent routing/reporting.",
+        "Normalize geography to one canonical vocabulary or ISO-based mapping.",
+    )
+    add_fix(
+        "P2",
+        "Incomplete segmentation fields",
+        seg_incomplete,
+        "ICP scoring and personalization",
+        "Missing firmographic or prioritization fields weaken account tiering, segmentation and AI-assisted personalization.",
+        "Backfill the specific fields used by the ICP model rather than enriching every possible attribute.",
+    )
+    add_fix(
+        "P3",
+        "Missing source attribution",
+        missing_source,
+        "Channel attribution and performance reporting",
+        "Unknown acquisition source weakens campaign attribution and channel-performance analysis.",
+        "Backfill source where possible and make source capture mandatory for new records.",
+    )
+
+    fix_first = pd.DataFrame(queue)
+    if not fix_first.empty:
+        priority_rank = {"P1": 1, "P2": 2, "P3": 3}
+        fix_first["_rank"] = fix_first["Priority"].map(priority_rank)
+        fix_first = (
+            fix_first.sort_values(["_rank", "Affected records"], ascending=[True, False])
+            .drop(columns="_rank")
+            .reset_index(drop=True)
+        )
+
     return AuditResult(
         overall_score=round(overall, 1),
         dimension_scores=dimension_scores,
         summary=summary,
         issues=issues,
+        fix_first=fix_first,
         audited_data=audited,
         recommendations=recommendations,
     )
